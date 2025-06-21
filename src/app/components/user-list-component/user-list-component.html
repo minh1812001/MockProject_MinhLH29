@@ -1,1 +1,123 @@
-<p>user-list-component works!</p>
+<div class="user-list-container">
+    <div class="user-list-header">
+        <h2>User Management</h2>
+        <button class="btn btn-secondary" (click)="goBack()">
+            ← Back to Profile
+        </button>
+    </div>
+
+    <div class="filters-section">
+        <div class="search-box">
+            <input type="text" placeholder="Search users..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+                class="form-control" />
+        </div>
+
+        <div class="bulk-actions" *ngIf="selectedUsers.length > 0 && canDeleteUsers()">
+            <button class="btn btn-danger" (click)="deleteSelectedUsers()">
+                Delete Selected ({{ selectedUsers.length }})
+            </button>
+        </div>
+    </div>
+
+    <div class="alert alert-error" *ngIf="errorMessage">
+        {{ errorMessage }}
+    </div>
+
+    <div class="alert alert-success" *ngIf="successMessage">
+        {{ successMessage }}
+    </div>
+
+    <div class="loading" *ngIf="isLoading">
+        Loading users...
+    </div>
+
+    <div class="user-table" *ngIf="!isLoading">
+        <table>
+            <thead>
+                <tr>
+                    <th *ngIf="canDeleteUsers()">
+                        <input type="checkbox"
+                            [checked]="selectedUsers.length === filteredUsers.length && filteredUsers.length > 0"
+                            (change)="selectAllUsers()" />
+                    </th>
+                    <th (click)="onSort('username')" class="sortable">
+                        Username {{ getSortIcon('username') }}
+                    </th>
+                    <th (click)="onSort('firstName')" class="sortable">
+                        Name {{ getSortIcon('firstName') }}
+                    </th>
+                    <th (click)="onSort('email')" class="sortable">
+                        Email {{ getSortIcon('email') }}
+                    </th>
+                    <th (click)="onSort('role')" class="sortable">
+                        Role {{ getSortIcon('role') }}
+                    </th>
+                    <th (click)="onSort('isActive')" class="sortable">
+                        Status {{ getSortIcon('isActive') }}
+                    </th>
+                    <th (click)="onSort('createdAt')" class="sortable">
+                        Created {{ getSortIcon('createdAt') }}
+                    </th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let user of filteredUsers" [class.selected]="isUserSelected(user.id)">
+                    <td *ngIf="canDeleteUsers()">
+                        <input type="checkbox" [checked]="isUserSelected(user.id)"
+                            (change)="toggleUserSelection(user.id)" />
+                    </td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.firstName }} {{ user.lastName }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <span class="role-badge" [class]="'role-' + user.role">
+                            {{ user.role | titlecase }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge" [class]="user.isActive ? 'status-active' : 'status-inactive'">
+                            {{ user.isActive ? 'Active' : 'Inactive' }}
+                        </span>
+                    </td>
+                    <td>{{ user.createdAt | date:'short' }}</td>
+                    <td class="actions">
+                        <button class="btn btn-sm btn-primary" *ngIf="canEditUsers()" (click)="editUser(user)"
+                            title="Edit User">
+                            ✏️
+                        </button>
+
+                        <button class="btn btn-sm btn-warning" *ngIf="canEditUsers()" (click)="toggleUserStatus(user)"
+                            [title]="user.isActive ? 'Deactivate User' : 'Activate User'">
+                            {{ user.isActive ? '🚫' : '✅' }}
+                        </button>
+
+                        <button class="btn btn-sm btn-danger" *ngIf="canDeleteUsers() && user.id !== currentUser?.id"
+                            (click)="deleteUser(user)" title="Delete User">
+                            🗑️
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="no-users" *ngIf="filteredUsers.length === 0">
+            <p>No users found</p>
+        </div>
+    </div>
+
+    <div class="user-stats">
+        <div class="stat-card">
+            <h4>Total Users</h4>
+            <span class="stat-number">{{ users.length }}</span>
+        </div>
+        <div class="stat-card">
+            <h4>Active Users</h4>
+            <span class="stat-number">{{ (users | json | json).split('"isActive":true').length - 1 }}</span>
+        </div>
+        <div class="stat-card">
+            <h4>Admin Users</h4>
+            <span class="stat-number">{{ (users | json | json).split('"role":"admin"').length - 1 }}</span>
+        </div>
+    </div>
+</div>

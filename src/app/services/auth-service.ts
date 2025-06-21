@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { LoginRequest, User } from '../Model/user.model';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { UserService } from './user-service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -20,10 +20,11 @@ export class AuthService {
 
   login(credentials: LoginRequest): Observable<User | null> {
     const users = this.userService.getAllUsers();
-    const user = users.find(u => 
-      u.username === credentials.username && 
-      u.password === credentials.password &&
-      u.isActive
+    const user = users.find(
+      (u) =>
+        u.username === credentials.username &&
+        u.password === credentials.password &&
+        u.isActive
     );
 
     if (user) {
@@ -31,7 +32,7 @@ export class AuthService {
       this.currentUserSubject.next(user);
       return of(user);
     }
-    
+
     return of(null);
   }
 

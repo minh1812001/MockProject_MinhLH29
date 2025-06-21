@@ -3,7 +3,7 @@ import { RegisterRequest, User } from '../Model/user.model';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
   private users: User[] = [
@@ -19,7 +19,7 @@ export class UserService {
       updatedAt: new Date('2024-01-01'),
       isActive: true,
       phone: '+84123456789',
-      address: 'Ho Chi Minh City, Vietnam'
+      address: 'Ho Chi Minh City, Vietnam',
     },
     {
       id: 2,
@@ -33,8 +33,8 @@ export class UserService {
       updatedAt: new Date('2024-01-02'),
       isActive: true,
       phone: '+84987654321',
-      address: 'Hanoi, Vietnam'
-    }
+      address: 'Hanoi, Vietnam',
+    },
   ];
 
   private usersSubject = new BehaviorSubject<User[]>(this.users);
@@ -45,11 +45,11 @@ export class UserService {
   }
 
   getUserById(id: number): User | undefined {
-    return this.users.find(user => user.id === id);
+    return this.users.find((user) => user.id === id);
   }
 
   getUserByUsername(username: string): User | undefined {
-    return this.users.find(user => user.username === username);
+    return this.users.find((user) => user.username === username);
   }
 
   register(userData: RegisterRequest): Observable<User> {
@@ -65,7 +65,7 @@ export class UserService {
       updatedAt: new Date(),
       isActive: true,
       phone: userData.phone,
-      address: userData.address
+      address: userData.address,
     };
 
     this.users.push(newUser);
@@ -74,12 +74,12 @@ export class UserService {
   }
 
   updateUser(id: number, userData: Partial<User>): Observable<User> {
-    const userIndex = this.users.findIndex(user => user.id === id);
+    const userIndex = this.users.findIndex((user) => user.id === id);
     if (userIndex !== -1) {
       this.users[userIndex] = {
         ...this.users[userIndex],
         ...userData,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
       this.usersSubject.next(this.users);
       return of(this.users[userIndex]);
@@ -89,7 +89,7 @@ export class UserService {
   }
 
   deleteUser(id: number): Observable<boolean> {
-    const userIndex = this.users.findIndex(user => user.id === id);
+    const userIndex = this.users.findIndex((user) => user.id === id);
     if (userIndex !== -1) {
       this.users.splice(userIndex, 1);
       this.usersSubject.next(this.users);
@@ -99,10 +99,10 @@ export class UserService {
   }
 
   isUsernameExists(username: string): boolean {
-    return this.users.some(user => user.username === username);
+    return this.users.some((user) => user.username === username);
   }
 
   isEmailExists(email: string): boolean {
-    return this.users.some(user => user.email === email);
+    return this.users.some((user) => user.email === email);
   }
 }

@@ -1,1 +1,169 @@
-<p>admin-dashboard-component works!</p>
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div class="header-content">
+            <h1>Admin Dashboard</h1>
+            <p>Welcome back, {{ currentUser?.firstName }}!</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-secondary" (click)="navigateToProfile()">
+                Profile
+            </button>
+            <button class="btn btn-danger" (click)="logout()">
+                Logout
+            </button>
+        </div>
+    </div>
+
+    <div class="loading" *ngIf="isLoading">
+        <div class="spinner"></div>
+        <p>Loading dashboard...</p>
+    </div>
+
+    <div class="dashboard-content" *ngIf="!isLoading">
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card primary">
+                <div class="stat-icon">👥</div>
+                <div class="stat-info">
+                    <h3>Total Users</h3>
+                    <div class="stat-number">{{ stats.totalUsers }}</div>
+                </div>
+            </div>
+
+            <div class="stat-card success">
+                <div class="stat-icon">✅</div>
+                <div class="stat-info">
+                    <h3>Active Users</h3>
+                    <div class="stat-number">{{ stats.activeUsers }}</div>
+                    <div class="stat-percentage">{{ getActiveUserPercentage() }}%</div>
+                </div>
+            </div>
+
+            <div class="stat-card warning">
+                <div class="stat-icon">⚠️</div>
+                <div class="stat-info">
+                    <h3>Inactive Users</h3>
+                    <div class="stat-number">{{ stats.inactiveUsers }}</div>
+                </div>
+            </div>
+
+            <div class="stat-card info">
+                <div class="stat-icon">👑</div>
+                <div class="stat-info">
+                    <h3>Admin Users</h3>
+                    <div class="stat-number">{{ stats.adminUsers }}</div>
+                    <div class="stat-percentage">{{ getAdminUserPercentage() }}%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h2>Quick Actions</h2>
+            <div class="actions-grid">
+                <div class="action-card" (click)="navigateToUserList()">
+                    <div class="action-icon">📋</div>
+                    <h3>Manage Users</h3>
+                    <p>View, edit, and manage all users</p>
+                </div>
+
+                <div class="action-card" onclick="alert('Feature coming soon!')">
+                    <div class="action-icon">📊</div>
+                    <h3>Reports</h3>
+                    <p>Generate user activity reports</p>
+                </div>
+
+                <div class="action-card" onclick="alert('Feature coming soon!')">
+                    <div class="action-icon">⚙️</div>
+                    <h3>System Settings</h3>
+                    <p>Configure application settings</p>
+                </div>
+
+                <div class="action-card" onclick="alert('Feature coming soon!')">
+                    <div class="action-icon">🔐</div>
+                    <h3>Security</h3>
+                    <p>Manage security settings</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Users -->
+        <div class="recent-users">
+            <h2>Recent Users</h2>
+            <div class="users-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let user of stats.recentUsers">
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">{{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}
+                                    </div>
+                                    <div>
+                                        <div class="user-name">{{ user.firstName }} {{ user.lastName }}</div>
+                                        <div class="user-username">@{{ user.username }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                <span class="role-badge" [class]="'role-' + user.role">
+                                    {{ user.role | titlecase }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="status-badge"
+                                    [class]="user.isActive ? 'status-active' : 'status-inactive'">
+                                    {{ user.isActive ? 'Active' : 'Inactive' }}
+                                </span>
+                            </td>
+                            <td>{{ user.createdAt | date:'short' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="no-users" *ngIf="stats.recentUsers.length === 0">
+                    <p>No recent users</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="system-status">
+            <h2>System Status</h2>
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="status-indicator active"></div>
+                    <div class="status-info">
+                        <h4>Application Status</h4>
+                        <p>All systems operational</p>
+                    </div>
+                </div>
+
+                <div class="status-item">
+                    <div class="status-indicator active"></div>
+                    <div class="status-info">
+                        <h4>User Authentication</h4>
+                        <p>Service running normally</p>
+                    </div>
+                </div>
+
+                <div class="status-item">
+                    <div class="status-indicator active"></div>
+                    <div class="status-info">
+                        <h4>Data Storage</h4>
+                        <p>Local storage available</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
